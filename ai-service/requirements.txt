@@ -1,0 +1,29 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+python-multipart==0.0.9
+pydantic==2.7.1
+pydantic-settings==2.3.0
+
+# PDF processing
+PyMuPDF==1.24.5
+pypdf2==3.0.1
+
+# Embeddings & Vector Search
+sentence-transformers==3.0.1
+faiss-cpu==1.8.0
+numpy==1.26.4
+
+# Language Detection
+langdetect==1.0.9
+
+# LLM APIs
+openai==1.35.7
+google-generativeai==0.7.2
+
+# Utilities
+python-dotenv==1.0.1
+httpx==0.27.0
+tiktoken==0.7.0
+
+groq>=0.4.0
+deep-translator==1.11.4

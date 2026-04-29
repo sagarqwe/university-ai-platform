@@ -1,0 +1,6 @@
+# File: frontend/public/robots.txt
+# Disallow indexing of admin paths
+
+User-agent: *
+Disallow: /admin
+Allow: /

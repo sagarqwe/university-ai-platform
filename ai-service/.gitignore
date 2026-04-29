@@ -1,0 +1,24 @@
+# File: ai-service/.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+venv/
+.venv/
+env/
+
+# Environment (keep .env.example, ignore .env with real API keys)
+.env
+
+# FAISS index (runtime-generated, can be rebuilt by /reindex)
+data/faiss_index*
+data/pdfs/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store

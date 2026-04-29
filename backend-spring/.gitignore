@@ -1,0 +1,23 @@
+# File: backend-spring/.gitignore
+
+target/
+*.class
+*.jar
+*.war
+
+# Upload directory (PDFs stored here at runtime)
+uploads/
+test-uploads/
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
+
+# OS
+.DS_Store

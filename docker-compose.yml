@@ -1,0 +1,157 @@
+# =============================================================================
+# File: university-ai-platform/docker-compose.yml
+# Purpose: Full-stack Docker Compose for the University AI Platform.
+#
+# Services:
+#   postgres    → PostgreSQL 16 database
+#   backend     → Spring Boot REST API (port 8080)
+#   ai-service  → FastAPI RAG pipeline  (port 8000)
+#   frontend    → React app via Nginx   (port 3000)
+#
+# Usage:
+#   docker compose up --build          # first run (builds all images)
+#   docker compose up -d               # background
+#   docker compose down                # stop
+#   docker compose down -v             # stop + delete volumes
+#   docker compose logs -f backend     # tail a service log
+#
+# Prerequisites:
+#   Copy ai-service/.env.example → ai-service/.env and add your LLM API key.
+# =============================================================================
+
+version: '3.9'
+
+# ── Shared network: all services can reach each other by service name ─────────
+networks:
+  uni-network:
+    driver: bridge
+
+# ── Named volumes ─────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+  pdf_uploads:
+    driver: local   # shared between backend (writes) and ai-service (reads)
+  faiss_index:
+    driver: local   # persists FAISS index across ai-service restarts
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: uni_postgres
+    restart: unless-stopped
+    networks:
+      - uni-network
+    environment:
+      POSTGRES_DB:       university_ai_db
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"          # expose for pgAdmin / local psql access
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docs/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d university_ai_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Spring Boot Backend ─────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend-spring
+      dockerfile: Dockerfile
+    container_name: uni_backend
+    restart: unless-stopped
+    networks:
+      - uni-network
+    ports:
+      - "8080:8080"
+    environment:
+      # Database — uses container name "postgres", not localhost
+      SPRING_DATASOURCE_URL:      jdbc:postgresql://postgres:5432/university_ai_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # AI service — uses container name "ai-service", not localhost
+      APP_AI_SERVICE_URL: http://ai-service:8000
+
+      # Upload directory (inside container, mapped to shared volume)
+      APP_UPLOAD_DIR: /app/uploads/pdfs
+      APP_AI_DATA_DIR: /app/uploads/pdfs   # same volume, no copy needed in Docker
+
+      # JWT
+      APP_JWT_SECRET: university-ai-platform-super-secret-jwt-key-change-in-production-2024
+      APP_JWT_EXPIRATION_MS: "86400000"
+
+      # CORS — allow frontend container (browser hits localhost:3000)
+      APP_CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080"
+
+      # Logging
+      LOGGING_LEVEL_COM_UNIVERSITY_PLATFORM: INFO
+    volumes:
+      - pdf_uploads:/app/uploads/pdfs    # shared with ai-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ── FastAPI AI Service ──────────────────────────────────────────────────────
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: uni_ai_service
+    restart: unless-stopped
+    networks:
+      - uni-network
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./ai-service/.env                # LLM API key loaded from here
+    environment:
+      # Override paths to use Docker volume mount points
+      PDF_STORAGE_PATH:  /app/data/pdfs
+      FAISS_INDEX_PATH:  /app/data/faiss_index
+      HOST: "0.0.0.0"
+      PORT: "8000"
+    volumes:
+      - pdf_uploads:/app/data/pdfs       # same volume backend writes to
+      - faiss_index:/app/data            # persists FAISS index
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s   # extra time to load embedding model on first start
+
+  # ── React Frontend ──────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # In Docker, the browser is on the HOST machine, so it hits localhost:8080
+        # The Nginx proxy inside the container handles /api/* → backend:8080
+        REACT_APP_API_URL: "http://localhost:8080"  # browser calls backend directly
+        REACT_APP_NAME: UniAI Platform
+        REACT_APP_DEMO_MODE: "true"
+        REACT_APP_ENABLE_ODIA: "true"
+    container_name: uni_frontend
+    restart: unless-stopped
+    networks:
+      - uni-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
