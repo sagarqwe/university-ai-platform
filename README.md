@@ -1,396 +1,258 @@
-# university-ai-platform
-
-An advanced AI-powered system designed to provide intelligent, context-aware, and multilingual assistance for university students and administrators.
-
-
-
-> ⚡ This is NOT a chatbot — it is a \*\*University Intelligence System powered by RAG (Retrieval-Augmented Generation)\*\*.
-
-
-
-\---
-
-
-
-\## 🚀 Key Highlights
-
-
-
-\- 🔐 Secure Authentication with Role-Based Access (Student/Admin)
-
-\- 🧠 RAG-based AI Engine (Context-aware, No Hallucination)
-
-\- 🌍 Multilingual Support (English, Hindi, Odia)
-
-\- 📊 Query Intelligence Dashboard (Core Innovation)
-
-\- 😡 Sentiment Analysis for Student Feedback
-
-\- 🔁 Auto-Improvement System (Self-learning AI)
-
-\- 📁 Admin Document Management System
-
-\- 🐳 Dockerized Microservices Architecture
-
-
-
-\---
-
-
-
-\## 🧠 System Architecture
-
-
-
-
-
-User → React Frontend → Spring Boot Backend → Python AI Engine → FAISS → LLM → Response
-
-
-
-
-
-\---
-
-
-
-\## 🔐 Authentication System
-
-
-
-\### Features:
-
-\- JWT Authentication
-
-\- Role-based Access Control (RBAC)
-
-\- Student \& Admin Roles
-
-\- Profile Completion Check
-
-\- Demo Login (Admin / Student)
-
-
-
-\### Sign In:
-
-\- Email
-
-\- Password
-
-\- Role Selection
-
-
-
-\### Sign Up (Students Only):
-
-\- Full Name
-
-\- Email
-
-\- Password
-
-\- Confirm Password
-
-
-
-\### Profile Setup:
-
-\- Branch (CSE, ECE, etc.)
-
-\- Year (1–4)
-
-\- Course (B.Tech, M.Tech)
-
-\- Hostel (Yes/No)
-
-
-
-\---
-
-
-
-\## 🧠 AI Core (RAG Engine)
-
-
-
-\### Workflow:
-
-
-
-User → Backend → Python AI → FAISS → LLM → Response
-
-
-
-
-
-\### Features:
-
-\- PDF-based knowledge retrieval
-
-\- Context-restricted answers
-
-\- No hallucination responses
-
-\- Semantic search using embeddings
-
-
-
-\### Hallucination Control:
-
+# 🎓 UniMind AI — University Intelligence System
+
+> **Not just a chatbot. An AI-powered university intelligence platform.**
+
+[![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react)](https://reactjs.org/)
+[![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot-6DB33F?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Python](https://img.shields.io/badge/AI%20Service-Python-3776AB?logo=python)](https://python.org/)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?logo=postgresql)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Deployment-Docker-2496ED?logo=docker)](https://www.docker.com/)
+[![FAISS](https://img.shields.io/badge/Vector%20DB-FAISS-FF6F00)](https://faiss.ai/)
+
+---
+
+## 📌 Table of Contents
+
+- [Overview](#-overview)
+- [Architecture](#-architecture)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Environment Variables](#-environment-variables)
+- [API Reference](#-api-reference)
+- [Screenshots](#-screenshots)
+- [What Makes This Win](#-what-makes-this-win)
+- [License](#-license)
+
+---
+
+## 🧠 Overview
+
+**UniMind AI** is a RAG (Retrieval-Augmented Generation) powered university intelligence system built for students and administrators. It answers queries using **official university documents only** — no hallucinations, no guessing.
+### 🎯 Key Differentiators
+| Feature | Status |
+|---|---|
+| Query Intelligence Dashboard | ✅ |
+| Sentiment Analysis | ✅ |
+| Auto-Improvement System | ✅ |
+| Hallucination Control | ✅ |
+| Multilingual Support | ✅ |
+| Confidence Scoring | ✅ |
+
+---
+
+## 🏗️ Architecture
+┌─────────────────────────────────────────────────────┐
+│                   React Frontend                    │
+│   Student Dashboard │ Admin Dashboard │ Auth UI     │
+└──────────────────────────┬──────────────────────────┘
+│ REST API
+┌──────────────────────────▼──────────────────────────┐
+│               Spring Boot Backend                   │
+│   JWT Auth │ Role-Based Access │ Chat Logging       │
+└──────────────────────────┬──────────────────────────┘
+│ Internal API
+┌──────────────────────────▼──────────────────────────┐
+│               Python AI Microservice                │
+│   LangDetect │ RAG Engine │ FAISS │ LLM │ Sentiment │
+└──────────────────────────┬──────────────────────────┘
+│
+┌──────────────────────────▼──────────────────────────┐
+│                   PostgreSQL DB                     │
+│   Users │ Chat Logs │ Documents │ Analytics         │
+└─────────────────────────────────────────────────────┘
+---
+
+## ✨ Features
+
+### 🔐 1. Authentication System
+- **Sign In** — Email, Password, Role selector (Student / Admin)
+- **Sign Up** — Full Name, Email, Password (Students only)
+- **Profile Setup** (First login) — Branch, Year, Course, Hostel
+- JWT Authentication with role-based access control
+- Demo login buttons for quick evaluation
+
+### 🧠 2. Core AI / RAG Engine
+- PDF-based knowledge ingestion
+- Context-restricted answers (no hallucination)
+- Multilingual query support
+- FAISS vector similarity search
+
+### 🌍 3. Multilingual System
+- Auto language detection via `langdetect`
+- English ↔ Hindi support (optional Odia)
+- Detect → Translate → Process → Translate back
+- Response always in the user's query language
+
+### 🛑 4. Hallucination Control
 ```python
-
-if similarity\_score < threshold:
-
-&#x20;   return "Information not available in official documents."
-
-🌍 Multilingual System
-
-Features:
-
-Automatic language detection (langdetect)
-
-English ↔ Hindi ↔ Odia support
-
-Response in same language
-
-Flow:
-
-Detect → Translate → Process → Translate Back
-
-📊 Confidence Scoring System
-
-Score Range	Status
-
-> 0.8	✅ Verified
-
-0.5–0.8	⚠️ Moderate
-
-< 0.5	❌ Low Confidence
-
-💬 Chat System
-
-Real-time chat interface
-
-Message bubbles UI
-
-Timestamp display
-
-Confidence badge
-
-Language badge
-
-Session history
-
-📁 Admin Document Management
-
-Upload PDF documents
-
-Store metadata
-
-Version control
-
-Reindex trigger button
-
-🔄 Vector Reindex System
-
-Trigger:
-
-After document upload
-
-Function:
-
-Reload documents
-
-Generate embeddings
-
-Update FAISS index
-
-📊 Query Intelligence Dashboard ⭐
-
-Features:
-
-Most asked topics
-
-Queries per day
-
-Peak usage hours
-
-Department-wise analysis
-
-😡 Sentiment Analysis
-
-Detects:
-
-Positive
-
-Neutral
-
-Negative
-
-Purpose:
-
-Identify student frustration trends
-
-Improve system quality
-
-🔁 Auto-Improvement System
-
-Detect low-confidence queries
-
-Suggest missing documents
-
-Generate FAQ recommendations
-
-📊 Analytics Dashboard
-
-Query trends (Line Chart)
-
-Topic distribution (Bar Chart)
-
-Language usage (Pie Chart)
-
-Confidence trends
-
-🧾 Chat Logging System
-
-
-
-Stores:
-
-
-
-Query
-
-Response
-
-Confidence Score
-
-Language
-
-Sentiment
-
-Timestamp
-
-User Info
-
-🧠 Personalization System
-
-
-
-Based on:
-
-
-
-Branch
-
-Year
-
-Course
-
-Example:
-
-
-
-“CSE students frequently ask about placements”
-
-
-
-🔍 Transparency Feature
-
-Shows retrieved document chunks
-
-Displays similarity scores
-
-Builds trust in AI responses
-
-🖥️ Dashboards
-
-👨‍🎓 Student Dashboard
-
-Chat interface
-
-Language selector
-
-Session history
-
-Confidence display
-
-System status panel
-
-🛠️ Admin Dashboard
-
-Metrics overview
-
-Document upload
-
-Query logs
-
-Analytics charts
-
-🐳 Docker Setup
-
-Run:
-
+if similarity_score < threshold:
+    return "Information not available in official documents."
+```
+- Red-styled warning in UI for low-confidence responses
+- Zero hallucination guarantee on out-of-scope queries
+
+### 📊 5. Confidence Scoring System
+| Score | Status | UI Color |
+|---|---|---|
+| > 0.8 | Verified | 🟢 Green |
+| 0.5 – 0.8 | Moderate | 🟡 Yellow |
+| < 0.5 | Low Confidence | 🔴 Red |
+
+### 💬 6. Chat System
+- Message bubbles with timestamps
+- Confidence badge per response
+- Language badge per response
+- Full session history
+
+### 📁 7. Admin Document Management
+- Upload PDF documents
+- Store metadata & version tracking
+- One-click reindex button
+
+### 🔄 8. Vector Reindex System
+- Auto-triggered after PDF upload
+- Regenerates FAISS embeddings
+- Keeps vector DB always up to date
+
+### 📊 9. Query Intelligence Dashboard ⭐ (Winning Feature)
+- Most asked topics
+- Queries per day
+- Peak usage hours
+- Department-wise query breakdown
+
+### 😡 10. Sentiment Analysis
+- Detects Negative / Neutral / Positive sentiment
+- Tracks student frustration trends
+- Useful for admin intervention alerts
+
+### 🔁 11. Auto-Improvement System
+- Detects low-confidence query patterns
+- Suggests missing documents to admin
+- Auto-generates FAQ suggestions
+
+### 📊 12. Analytics Dashboard
+- Queries over time — Line Chart
+- Most asked topics — Bar Chart
+- Language distribution — Pie Chart
+- Confidence score trends
+
+### 🧾 13. Chat Logging System
+Stores per query: `Query` · `Response` · `Confidence` · `Language` · `Sentiment` · `Timestamp` · `User`
+
+### 🧠 14. Personalization System
+Responses are tailored based on:
+- Branch (CSE, ECE, etc.)
+- Year (1–4)
+- Course (B.Tech / M.Tech)
+
+> Example: *"CSE students often ask about placements"*
+
+### 🔍 15. Transparency Feature
+- Shows retrieved document chunks
+- Displays similarity score per chunk
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React, Tailwind CSS |
+| Backend | Spring Boot, Spring Security |
+| AI Service | Python, FastAPI, LangChain |
+| Vector DB | FAISS |
+| LLM | OpenAI / Ollama (configurable) |
+| Database | PostgreSQL |
+| Auth | JWT |
+| Language Detection | langdetect |
+| Containerization | Docker, Docker Compose |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Docker & Docker Compose installed
+- OpenAI API Key (or local Ollama setup)
+
+### Run the full system
+
+```bash
+git clone https://github.com/your-username/unimind-ai.git
+cd unimind-ai
+cp .env.example .env
+# Fill in your environment variables
 docker-compose up --build
+```
 
-Services:
+### Access
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:3000 |
+| Spring Boot API | http://localhost:8080 |
+| Python AI Service | http://localhost:8000 |
 
-React Frontend
+---
 
-Spring Boot Backend
+## 🔧 Environment Variables
 
-Python AI Service
+```env
+# Spring Boot
+JWT_SECRET=your_jwt_secret
+POSTGRES_URL=jdbc:postgresql://db:5432/unimind
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=yourpassword
 
-PostgreSQL Database
+# Python AI Service
+OPENAI_API_KEY=your_openai_key
+FAISS_INDEX_PATH=./faiss_index
+SIMILARITY_THRESHOLD=0.5
+DEFAULT_LANGUAGE=en
 
-🛠️ Tech Stack
+# React Frontend
+REACT_APP_API_URL=http://localhost:8080
+REACT_APP_AI_URL=http://localhost:8000
+```
 
-Layer	Technology
+---
 
-Frontend	React.js
+## 📡 API Reference
 
-Backend	Spring Boot
+### Auth Endpoints (Spring Boot)
+POST /api/auth/signup        → Register new user
+POST /api/auth/login         → Login, returns JWT
+POST /api/auth/profile       → Complete first-time profile
 
-AI Engine	Python (FAISS, NLP, langdetect)
+### Chat Endpoints
+POST /api/chat/query         → Send a query
+GET  /api/chat/history       → Get session history
 
-Database	PostgreSQL
+### Admin Endpoints
+POST /api/admin/upload       → Upload PDF document
+POST /api/admin/reindex      → Trigger FAISS reindex
+GET  /api/admin/logs         → Get all chat logs
+GET  /api/admin/analytics    → Get analytics data
+GET  /api/admin/documents    → List all documents
 
-DevOps	Docker
+### Python AI Service
+POST /query                  → RAG query + confidence + language + sentiment
+POST /reindex                → Rebuild FAISS index
+GET  /language/detect        → Detect query language
+GET  /sentiment              → Sentiment on text
 
-📂 Project Structure
+---
 
-university-ai-platform/
+## 🏆 What Makes This Win
 
-│── frontend/
+This is **not a chatbot**.
 
-│── backend/
+It is an **AI-powered university intelligence system** with:
 
-│── ai-service/
+1. **🔍 Query Intelligence Dashboard** — Admins see *exactly* what students are confused about, when, and from which department.
 
-│── database/
+2. **😡 Sentiment Analysis** — Detects student frustration in real-time. No other university chatbot does this.
 
-│── docker-compose.yml
+3. **🔁 Auto-Improvement System** — The system tells admins *which documents are missing* based on unanswered queries. It gets smarter over time.
 
-│── README.md
-
-⚙️ Installation
-
-git clone https://github.com/YOUR\_USERNAME/university-ai-platform.git
-
-cd university-ai-platform
-
-🎯 Project Vision
-
-
-
-To build a scalable AI-powered university intelligence system that:
-
-
-
-Eliminates misinformation
-
-Enhances student experience
-
-Enables data-driven decisions
-
+Combined with RAG-based hallucination control, multilingual support, and confidence scoring, this system is production-ready and genuinely useful.
